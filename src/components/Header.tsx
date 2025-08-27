@@ -44,7 +44,7 @@ const Header: React.FC = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex space-x-8 font-medium">
-          <a href="#home" className="text-white hover:text-blue-600">
+          <a href="#home" className="text-grey-600 hover:text-blue-600">
             Home
           </a>
           <a href="#about" className="text-white hover:text-blue-600">

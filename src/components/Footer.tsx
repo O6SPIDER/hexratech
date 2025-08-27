@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
         {/* Contact Info */}
         <div>
           <h3 className="text-white text-lg font-semibold mb-4">Contact</h3>
-          <p className="text-gray-400">Email: <br /> hexratech@gmail.com</p>
+          <p className="text-gray-400">Email: <br /> hexratech0@gmail.com</p>
           <p className="text-gray-400 mt-2">
             Phone:<br /> +233 55 822 1704<br /> +233 53 718 2073
           </p>

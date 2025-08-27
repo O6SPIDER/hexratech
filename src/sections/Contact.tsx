@@ -1,46 +1,59 @@
 import SectionTitle from "../components/SectionTitle";
 import Button from "../components/Button";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import toast from "react-hot-toast";
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
 
 const Contact: React.FC = () => {
-  const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
 
-    setLoading(true); // start loader
+    const form = e.currentTarget;
+    const formData: ContactFormData = {
+      name: (form.elements.namedItem("name") as HTMLInputElement).value,
+      email: (form.elements.namedItem("email") as HTMLInputElement).value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    setLoading(true);
 
     try {
-      const response = await fetch(form.action, {
-        method: form.method,
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
+      const response = await fetch("http://localhost:3000/api/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         form.reset();
-        setShowPopup(true);
+        toast.success("Message sent successfully!");
+        setShowPopup(true); // ✅ show the popup
       } else {
-        alert("Oops! Something went wrong. Please try again.");
+        toast.error("Oops! Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Form submit error:", error);
-      alert("Error submitting the form.");
+      toast.error("Error submitting the form.");
     } finally {
-      setLoading(false); // stop loader
+      setLoading(false);
     }
   };
 
   return (
-    <section id="contact" className="py-20 bg-white px-6 lg:px-20">
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <section id="contact" className="py-24 bg-gray-50 px-6 lg:px-20">
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         {/* Left Side - Info */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -55,12 +68,12 @@ const Contact: React.FC = () => {
             align="left"
           />
 
-          <p className="text-gray-600 max-w-md leading-relaxed">
+          <p className="text-gray-700 max-w-md leading-relaxed">
             We respond fast and keep it professional.
             <br />
             <a
-              href="mailto:spiderwebsonline25@gmail.com"
-              className="text-blue-600 hover:underline"
+              href="mailto:hexratech0@gmail.com"
+              className="text-blue-700 hover:underline font-bold"
             >
               Email us directly
             </a>
@@ -68,15 +81,18 @@ const Contact: React.FC = () => {
 
           {/* Contact Info */}
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
               <Mail className="w-6 h-6 text-blue-600 shrink-0" />
-              <span className="break-words">spiderwebsonline25@gmail.com</span>
+              <span className="break-words">hexratech0@gmail.com</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
               <Phone className="w-6 h-6 text-blue-600 shrink-0" />
-              <span>+233 55 123 4567</span>
+              <span>
+                +233 55 822 1704 <br />
+                +233 53 718 2073
+              </span>
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
               <MapPin className="w-6 h-6 text-blue-600 shrink-0" />
               <span>Accra, Ghana</span>
             </div>
@@ -93,27 +109,13 @@ const Contact: React.FC = () => {
         >
           <form
             id="contactForm"
-            className="bg-gray-50 p-8 rounded-2xl shadow-lg space-y-6"
-            action="https://formsubmit.co/spiderwebsonline25@gmail.com"
-            method="POST"
+            className="bg-white p-10 rounded-3xl shadow-xl space-y-6"
             onSubmit={handleSubmit}
+            aria-busy={loading}
           >
-            {/* Honeypot + Hidden Inputs */}
-            <input type="text" name="_honey" style={{ display: "none" }} />
-            <input type="hidden" name="_captcha" value="false" />
-            <input
-              type="hidden"
-              name="_autoresponse"
-              value="Thank you for contacting HexraTech! We have received your message and will get back to you soon."
-            />
-            <input type="hidden" name="_template" value="table" />
-
             {/* Name */}
             <div>
-              <label
-                htmlFor="contact-name"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700">
                 Name
               </label>
               <input
@@ -121,17 +123,14 @@ const Contact: React.FC = () => {
                 id="contact-name"
                 name="name"
                 required
-                className="mt-2 w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-black"
+                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-black"
                 placeholder="Your Name"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="contact-email"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -139,17 +138,14 @@ const Contact: React.FC = () => {
                 id="contact-email"
                 name="email"
                 required
-                className="mt-2 w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-black"
+                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-black"
                 placeholder="you@example.com"
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label
-                htmlFor="contact-phone"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-phone" className="block text-sm font-medium text-gray-700">
                 Phone
               </label>
               <input
@@ -158,59 +154,30 @@ const Contact: React.FC = () => {
                 name="phone"
                 pattern="[\d\s\-\+\(\)]*"
                 required
-                className="mt-2 w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-black"
+                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-black"
                 placeholder="Your Phone Number"
               />
             </div>
 
             {/* Message */}
             <div>
-              <label
-                htmlFor="contact-message"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700">
                 Message
               </label>
               <textarea
                 id="contact-message"
                 name="message"
-                rows={4}
+                rows={5}
                 required
-                className="mt-2 w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none text-black"
+                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none text-black"
                 placeholder="Type your message here..."
-              ></textarea>
+              />
             </div>
 
-            {/* Button with Loader */}
-            <div className="w-full sm:w-auto  disabled={loading}">
-              <Button>
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <svg
-                      className="animate-spin h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v8z"
-                      ></path>
-                    </svg>
-                    Sending...
-                  </span>
-                ) : (
-                  "Send Message"
-                )}
+            {/* Submit Button */}
+            <div className="w-full sm:w-auto">
+              <Button type="submit" loading={loading}>
+                {loading ? "Sending..." : "Send Message"}
               </Button>
             </div>
           </form>
@@ -218,26 +185,31 @@ const Contact: React.FC = () => {
       </div>
 
       {/* Thank You Popup */}
-      {showPopup && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-blue-500/25 z-[9999] flex justify-center items-center">
-          <div className="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-[90vw]">
-            <h3 className="text-blue-600 text-2xl font-semibold mb-3">
-              Thank you!
-            </h3>
-            <p className="text-gray-800 text-lg">
-              Your message has been sent.
-              <br />
-              We’ll get back to you soon.
-            </p>
-            <button
-              onClick={() => setShowPopup(false)}
-              className="mt-5 px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-400 text-white rounded-lg shadow hover:opacity-90 transition"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="fixed top-0 left-0 w-screen h-screen bg-black/25 z-[9999] flex justify-center items-center"
+          >
+            <div className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-[90vw]">
+              <h3 className="text-blue-600 text-2xl font-semibold mb-3">Thank you!</h3>
+              <p className="text-gray-800 text-lg">
+                Your message has been sent.
+                <br />
+                We’ll get back to you soon.
+              </p>
+              <button
+                onClick={() => setShowPopup(false)}
+                className="mt-5 px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-400 text-white rounded-lg shadow hover:opacity-90 transition"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
