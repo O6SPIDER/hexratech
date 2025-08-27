@@ -12,6 +12,9 @@ interface ContactFormData {
   message: string;
 }
 
+// ✅ Hardcoded API Base URL
+const API_BASE_URL = "https://hexratech-backend.onrender.com";
+
 const Contact: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -30,16 +33,16 @@ const Contact: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/send-message`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData),
-});
+      const response = await fetch(`${API_BASE_URL}/api/send-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       if (response.ok) {
         form.reset();
         toast.success("Message sent successfully!");
-        setShowPopup(true); // ✅ show the popup
+        setShowPopup(true);
       } else {
         toast.error("Oops! Something went wrong. Please try again.");
       }
@@ -115,7 +118,10 @@ const Contact: React.FC = () => {
           >
             {/* Name */}
             <div>
-              <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="contact-name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Name
               </label>
               <input
@@ -130,7 +136,10 @@ const Contact: React.FC = () => {
 
             {/* Email */}
             <div>
-              <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="contact-email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -145,7 +154,10 @@ const Contact: React.FC = () => {
 
             {/* Phone */}
             <div>
-              <label htmlFor="contact-phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="contact-phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Phone
               </label>
               <input
@@ -161,7 +173,10 @@ const Contact: React.FC = () => {
 
             {/* Message */}
             <div>
-              <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="contact-message"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Message
               </label>
               <textarea
@@ -194,7 +209,9 @@ const Contact: React.FC = () => {
             className="fixed top-0 left-0 w-screen h-screen bg-black/25 z-[9999] flex justify-center items-center"
           >
             <div className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-[90vw]">
-              <h3 className="text-blue-600 text-2xl font-semibold mb-3">Thank you!</h3>
+              <h3 className="text-blue-600 text-2xl font-semibold mb-3">
+                Thank you!
+              </h3>
               <p className="text-gray-800 text-lg">
                 Your message has been sent.
                 <br />
