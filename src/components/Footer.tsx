@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
         <div>
           <h3 className="text-white text-lg font-semibold mb-4">Follow Us</h3>
           <div className="flex space-x-6">
-            <a href="#" aria-label="Instagram" className="hover:text-white">
+            <a href="https://www.instagram.com/hexratechstudio?igsh=MWRhdWgzcjhxZ28ydA%3D%3D&utm_source=qr" aria-label="Instagram" className="hover:text-white">
               <Instagram className="w-5 h-5" />
             </a>
             <a href="#" aria-label="LinkedIn" className="hover:text-white">
